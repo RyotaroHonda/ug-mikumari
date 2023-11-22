@@ -1,0 +1,48 @@
+site_name: MIKUMARI User Guide
+#site_url: https://hul-official.gitlab.io/hul-ug-en/
+site_description: MIKUMARI User Guide
+site_author: 'R.Honda'
+#repo_url: https://gitlab.com/hul-official/hul-ug-en
+repo_name: ug-mikumari
+
+markdown_extensions:
+  - attr_list
+  - def_list
+  - markdown_katex:
+      no_inline_svg: true
+      insert_fonts_css: true
+#  - hbfm.inline_coloring
+#  - hbfm.inline_list
+#  - toc:
+#      slugify: !!python/name:hbfm.toc.slugify
+  #- hbfm.number_headers
+  #- hbfm.quote_uri_hash
+  - image_captions:
+      numbering: true
+  - caption:
+      numbering: true
+
+extra_css:
+  - css/custom.css
+
+site_name: MIKUMARI User Guide
+site_author: Ryotaro Honda
+copyright: KEK IPNS
+
+plugins:
+  - with-pdf:
+      author: Ryotaro Honda
+      copyright: KEK IPNS
+      cover_title: MIKUMARI User Guide
+      cover_subtitle: 2023.11.20
+      enabled_if_env: ENABLE_PDF_EXPORT
+      output_path: ../pdf/MIKUMARI_UG.pdf
+
+nav:
+  - Top: index.md
+  - Mikumari: mikumari/main.md
+#  - SiTCP: sitcp/main.md
+#  - Firmware: firmware/main.md
+#  - For Developer: developer/main.md
+#  - Software: software/main.md
+#  - Practical Usage: practical/main.md

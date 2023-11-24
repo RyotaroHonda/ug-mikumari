@@ -10,6 +10,10 @@
 
 The source codes are [here](https://github.com/RyotaroHonda/mikumari)
 
+### VHDL-2008
+
+defMIKUMARI.vhd is described with VHDL-2008.
+
 ## References
 
 [1] D. Calvet, IEEE TNS, vol. 67, no. 8, 1912-1919 (2020), doi: TNS.2020.3006698.

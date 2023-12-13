@@ -40,8 +40,8 @@ plugins:
 
 nav:
   - Top: index.md
+  - Release: release/release.md
   - Mikumari: mikumari/main.md
-#  - SiTCP: sitcp/main.md
 #  - Firmware: firmware/main.md
 #  - For Developer: developer/main.md
 #  - Software: software/main.md

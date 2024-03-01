@@ -12,7 +12,7 @@ In the secondary side, these clock signals are reproduced from the modulated clo
 
 ![MIKUMARI-MIN-CONFIG](mikumari-min-config.png "The minimum configuration of the MIKUMARI system."){: #MIKUMARI-MIN-CONFIG width="95%"}
 
-Since the MIKUMARI system aims to distribute the reference clock to synchronize FEEs, the connection topology of the MIKUMARI link should be a tree structure starting from a primary module. If the primary module cannot drive all FEEs, a fan-out module is necessary in intermediate layers. An example of fan-out is shown in the [figure](#MIKUMARI-FANOUT). As the CBT and the MIKUMARI link are defined as the full-duplex transceiver and the link protocol for point-to-point communication, respectively, a simple signal fan-out is not allowed. In fan-out module, the clock signals are once recovered and drive the CBTs transferring the modulated clock signal to downstream modules. In many applications, all FEEs will receive the same command from the primary module, and then TX data can be broadcasted, however, a user circuit summarizing information from the downstream modules may be necessary in the RX side. However, this is not mandatory. Since the TX and RX of the MIKUMARI link are independent, the RX port of the right side can be left open if you decide not to use the uplink data path. Since the validOutRx and frameLastOutRx signals are one-shot, the RX port and the TX ports cannot be directly connected due to the txAck cycle. Therefore, the TxElasticBuffer is necessary to connect the RX and TX ports. The TxElasticBuffer is a simple queuing buffer for adjusting CBT character transfer cycle.
+Since the MIKUMARI system aims to distribute the reference clock signal to synchronize FEEs, the connection topology of the MIKUMARI link should be a tree structure starting from a primary module. If the primary module cannot drive all FEEs, a fan-out module is necessary in intermediate layers. An example of fan-out is shown in the [figure](#MIKUMARI-FANOUT). As the CBT and the MIKUMARI link are defined as the full-duplex transceiver and the link protocol for point-to-point communication, respectively, a simple signal fan-out is not allowed. In fan-out module, the clock signals are once recovered and drive the CBTs transferring the modulated clock signal to downstream modules. In many applications, all FEEs will receive the same command from the primary module, and then TX data can be broadcasted, however, a user circuit summarizing information from the downstream modules may be necessary in the RX side. However, this is not mandatory. Since the TX and RX of the MIKUMARI link are independent, the RX port of the right side can be left open if you decide not to use the uplink data path. Since the validOutRx and frameLastOutRx signals are one-shot, the RX port and the TX ports cannot be directly connected due to the txAck cycle. Therefore, the TxElasticBuffer is necessary to connect the RX and TX ports. The TxElasticBuffer is a simple queuing buffer for adjusting CBT character transfer cycle.
 
 ![MIKUMARI-FANOUT](mikumari-fanout.png "Example of fan-out."){: #MIKUMARI-FANOUT width="90%"}
 
@@ -26,9 +26,9 @@ The CBT is a physical layer of the MIKUMARI system. About the CBT, see also [Ref
 - Encode and decode the CDCM modulated waveform pattern
 - Defines three types of CBT character using sign extension from 8-bit to 10-bit
 - Initialize IOSERDES when detecting the cable (fiber) connection
-- ~~Provides the clock monitor and the error detection.~~
 
-Currently, the CBT supports the CDCM-10-2.5, CDCM-10-1.5, and CDCM-8-1.5. Then, the frequency ratios between the serial and parallel clock signals are 5 for CDCM-10-XX and 4 for CDCM-8-XX with the double-data-rate (DDR) mode, respectively. The SDR mode is not supported. In addition, only the differential signal is supported.
+Currently, the CBT supports the CDCM-10-2.5, CDCM-10-1.5, CDCM-8-2.5, and CDCM-8-1.5. Then, the frequency ratios between the serial and parallel clock signals are 5 for CDCM-10-XX and 4 for CDCM-8-XX with the double-data-rate (DDR) mode, respectively. The SDR mode is not supported. In addition, only the differential signal is supported.
+**If you want to use the Local Area Common Clock Protocol (LACCP), you need to select CDCM-8-XX modes. The serdesOffset port does not work with CDCM-10-XX modes.**
 
 ### Interface of CBT
 
@@ -75,6 +75,8 @@ entity CbtLane is
       cbtLaneUp     : out std_logic; -- Indicates that CBT is ready for communication
       tapValueOut   : out std_logic_vector(kWidthTap-1 downto 0); -- IDELAY TAP value output
       bitslipNum    : out std_logic_vector(kWidthBitSlipNum-1 downto 0); -- Number of bitslip made
+      serdesOffset  : out signed(kWidthSerdesOffset-1 downto 0);
+      firstBitPatt  : out CdcmPatternType; -- ISERDES output pattern after finishing the idelay adjustment
 
       -- Error --
       patternErr    : out std_logic; -- Indicates CDCM waveform pattern is collapsed.
@@ -235,6 +237,16 @@ end CbtLane;
     <td>The number indicating how many bitslip is made in the initialization process.</td>
   </tr>
   <tr>
+    <td>serdesOffset</td>
+    <td class="tcenter">Out</td>
+    <td>The port provides the value indicating the phase difference between the input bit patter and the ClkPar signal. This is the special port for LACCP, not for users. This port works only with CDCM-8-XX modes. </td>
+  </tr>
+  <tr>
+    <td>firstBitPatt</td>
+    <td class="tcenter">Out</td>
+    <td>This port provides the bit pattern before starting the bit-slip process. This is for debug, not for users. </td>
+  </tr>
+  <tr>
     <td>patternErr</td>
     <td class="tcenter">Out</td>
     <td>This goes high when the waveform, which is not matched with the CDCM modulation pattern, is detected. Data is broken. </td>
@@ -346,9 +358,6 @@ The IDELAYE2 tap number is adjusted so as to stabilize the sampled data using th
 
 ### Error detection
 
-~~The clock monitor is always checking whether the RX signal is clock link or not. If this monitor misses the clock link RX signal, it requests to reset the CBT. If cbtLaneUp is high, it will be immediately de-asserted.~~
-Since the clock monitor makes a trouble in some cases, this function is temporary unused. If there is no trouble on the initialization process without the clock monitor, this function will be omitted in the next version up.
-
 When cbtLaneUp is high, the CBT checks whether the sampled bit pattern is matched with the CDCM encoding rule or not. If a broken pattern is detected, the patternErr signal is asserted, but at this moment, the CBT is not reset. If **more than 1%** of received bit pattern are broken, the RX quality check monitor requests to reset the CBT.
 
 When cbtLaneUp is high, the CBT transmits the T-type character, dogfood character, periodically. The dogfood character resets the watch dog timer in other side. If the watch dog timer can't eat dogfood within specified time, the watchDogErr goes high, and the watchdog timer requests to reset the CBT.
@@ -370,11 +379,12 @@ entity MikumariLane is
   generic
   (
     -- CBT --
-    kNumEncodeBits   : integer:= 2;
-    -- Scrambler --
-    enScrambler      : boolean:= true;
+    kNumEncodeBits    : integer:= 2;
+    -- MIKUMARI-Link --
+    enScrambler       : boolean:= true;
+    kHighPrecision    : boolean:= false;
     -- DEBUG --
-    enDEBUG          : boolean:= false
+    enDEBUG           : boolean:= false
   );
   port
   (
@@ -393,6 +403,7 @@ entity MikumariLane is
 
     pulseIn       : in std_logic;          -- Pulse input. Must be one-shot signal.
     pulseTypeTx   : in MikumariPulseType;  -- 3-bit short message to be sent with pulse.
+    pulseRegTx    : in MikumariHpmRegType; -- 4-bit additional message transferred by the pulse
     busyPulseTx   : out std_logic;         -- Under transmission of previous pulse. If high, pulseIn is ignored.
 
     -- Cbt ports --
@@ -409,10 +420,11 @@ entity MikumariLane is
     frameLastRx : out std_logic;           -- Indicate current dataOut is the last data in a normal frame.
     checksumErr : out std_logic;           -- Check-sum error is happened in the present normal frame.
     frameBroken : out std_logic;           -- Frame start position is not correctly detected
-    recvTermnd  : out std_logic;           -- Frame end position of the previous frame is not correctly detected
+    recvTermnd  : out std_logic;           -- Frame end position of the previsou frame is not correctly detected
 
     pulseOut    : out std_logic;           -- Reproduced one-shot pulse output.
-    pulseTypeRx : out MikumariPulseType;   -- Short message accompanying the pulse.
+    pulseTypeRx : out MikumariPulseType;   -- 3-bit short message accompanying the pulse.
+    pulseRegRx  : out MikumariHpmRegType;  -- 4-bit additional message transferred by the pulse
 
     -- Cbt ports --
     isKtypeIn   : in std_logic; --
@@ -440,6 +452,11 @@ end MikumariLane;
     <td>enScrambler</td>
     <td class="tcenter">-</td>
     <td>If it's true, data scrambler is enabled. Enabling the scrambler is recommended for the better jitter performance.</td>
+  </tr>
+  <tr>
+    <td>kHighPrecision</td>
+    <td class="tcenter">-</td>
+    <td>If it's true, the high-precision mode of the MIKUMARI pulse transmission is enabled.</td>
   </tr>
   </tr>
     <td>enDebug</td>
@@ -495,6 +512,11 @@ end MikumariLane;
     <td>pulseTypeTx</td>
     <td class="tcenter">In</td>
     <td>Pulse type input. This type value is transmitted together with a one-shot pulse. Currently, the pulse type width is 3-bit, and the 8-types of pulses can be transferred. The type value is latch when the pulseIn is high.</td>
+  </tr>
+  <tr>
+    <td>pulseRegTx</td>
+    <td class="tcenter">In</td>
+    <td>The 4-bit extra data to be transmitted together with a one-shot pulse. This port is active only with the high-precision mode. The value is latch when the pulseIn is high.</td>
   </tr>
   <tr>
     <td>busyPulseTx</td>
@@ -567,6 +589,11 @@ end MikumariLane;
     <td>Received pulse type value. The value when pulseOut is high is valid.</td>
   </tr>
   <tr>
+    <td>pulseRegRx</td>
+    <td class="tcenter">Out</td>
+    <td>Received extra 4-bit data value. The value when pulseOut is high is valid.</td>
+  </tr>
+  <tr>
     <td>isKtypeIn</td>
     <td class="tcenter">In</td>
     <td>It indicates that the current dataOutRx is a K-type character. Connect to isKTypeRx of the CbtLane.</td>
@@ -609,9 +636,20 @@ The time char for MIKUMARI data receive is shown in the [figure](#MIKU-RX-TIME).
 
 ### Pulse transmission
 
-The pulse transmission with pulse types is realized by using K-type characters. The pulse type and the transmission request timing are encoded to a K-type character, and it is transmitted with highest priority. The receiver side decodes the received pulse K-type character and reproduces the pulse timing and the pulse type value. While the CBT character transmission is accepted once per 5 or 10 clock cycles, the pulse transmission can be requested at any timing. Due to the internal process realizing this feature, an additional idle character transmission is necessary after the pulse K-type character transmission. Therefore, the busy length for a pulse transfer is 10 and 20 clock cycles for CDCM-10-2.5 and CDCM-10-1.5 (CDCM-8-1.5), respectively. This limits the maximum pulse frequency. In addition, transmission of several pulse types at the same timing is also impossible.
+From version 2.0, the MIKUMARI-link protocol supports the high-precision mode for the pulse transmission. The original mode is called the low-latency mode to distingush them.
 
-Due to the limitation of the range of expressible bit combinations using 8-bit, only the pulse K-type characters do not guarantee the DC balance of the signal on the transmission line. If the averaged duty ratio of the CDCM modulated clock is not 50%, the recovered clock phase is systematically shifted depending on the averaged duty ratio. This effect is visible when the pulse transfer rate is high. See [Ref](https://ieeexplore.ieee.org/document/10098185) for the details.
+**Low-latency mode**
+
+The pulse transmission with pulse types is realized by using K-type characters. The pulse type and the transmission request timing are encoded to a K-type character, and it is transmitted with highest priority. The receiver side decodes the received pulse K-type character and reproduces the pulse timing and the pulse type value. While the CBT character transmission is accepted once per 5 or 10 clock cycles, the pulse transmission can be requested at any timing. Due to the internal process realizing this feature, an additional idle character transmission is necessary after the pulse K-type character transmission. Therefore, the busy length for a pulse transfer is 10 and 20 clock cycles for CDCM-10-2.5 (CDCM-8-2.5) and CDCM-10-1.5 (CDCM-8-1.5), respectively. This limits the maximum pulse frequency. In addition, transmission of several pulse types at the same timing is also impossible.
+
+Due to the limitation of the range of expressible bit combinations using 8-bit, the pulse K-type characters do not guarantee the DC balance of the signal on the transmission line. If the averaged duty ratio of the CDCM modulated clock is not 50%, the recovered clock signal phase is systematically shifted depending on the averaged duty ratio. This effect is visible when the pulse transfer rate is high. See [Ref](https://ieeexplore.ieee.org/document/10098185) for the details.
+
+**High-precision mode**
+
+The 3-bit pulse type and the 4-bit extra data are encoded to **two K-type characters.** Thus, the pulse trasmission takes longer pulse transmission latency and the busy time than thoese of the low-latency mode. For the same reason, the miximu pulse transmission rate is also decreased.
+Instead, the high-precision mode ensures the DC balance perfectly. The phase shift of the recovered clock signal seen in the low-latency mode will not happen. This mode provides the better clock signal synchronization.
+
+The author expects to use the extra 4-bit data to send information for the finer timing comepensation. For example, you can implement the 1-ns 3-bit TDC measuring the input pulse timing in the primary side (clkPar frequency is expected to be 125 MHz), and the TDC value is sent to the secondary side. Thus, you achieve the 1-ns timing trasmission.
 
 ### Data scrambler
 

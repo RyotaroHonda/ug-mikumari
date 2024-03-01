@@ -20,7 +20,9 @@ The source codes are [here](https://github.com/RyotaroHonda/mikumari)
 
 ### VHDL-2008
 
-defMIKUMARI.vhd is described with VHDL-2008.
+Until v1.1, defMIKUMARI.vhd is described with VHDL-2008.
+
+From v2.0, no source file written with VHDL-2008.
 
 ## References
 

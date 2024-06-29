@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="author" content="Ryotaro Honda">
+        
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+        <title>Release - MIKUMARI User Guide</title>
+        <link href="../../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../../css/fontawesome.min.css" rel="stylesheet">
+        <link href="../../css/brands.min.css" rel="stylesheet">
+        <link href="../../css/solid.min.css" rel="stylesheet">
+        <link href="../../css/v4-font-face.min.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link id="hljs-light" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" >
+        <link id="hljs-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css" disabled>
+        <link href="../../css/custom.css" rel="stylesheet">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="../..">MIKUMARI User Guide</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="nav-item">
+                                <a href="../.." class="nav-link">Top</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="./" class="nav-link active" aria-current="page">Release</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../../mikumari/main/" class="nav-link">Mikumari</a>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ms-md-auto">
+                            <li class="nav-item">
+                                <a rel="prev" href="../.." class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="../../mikumari/main/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-bs-toggle="collapse" data-bs-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-bs-level="1"><a href="#release-notes" class="nav-link">Release notes</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-bs-level="2"><a href="#version-11-dec-13-2023" class="nav-link">Version 1.1 - Dec. 13, 2023</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#version-20-feb-27-2024" class="nav-link">Version 2.0 - Feb. 27, 2024</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#version-21-jun-29-2024" class="nav-link">Version 2.1 - Jun. 29, 2024</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h1 id="release-notes">Release notes</h1>
+<h2 id="version-11-dec-13-2023">Version 1.1 - Dec. 13, 2023</h2>
+<h3 id="new-improved">New + Improved</h3>
+<ul>
+<li>Add pwrOnRst port to CbtLane<ul>
+<li>CbtLane has single reset input so far despite using several clock signals. Logics driven by clkPar and logics driven by clkIndep and clkIdelayRef should not be reset by the same reset signal. To fix this, another reset signal, pwrOnRst, is introduced; it is expected that this reset is generated by the PLL lock signal, which generates clkIndep and clkIdelayRef signals.</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-20-feb-27-2024">Version 2.0 - Feb. 27, 2024</h2>
+<h3 id="new-improved_1">New + Improved</h3>
+<ul>
+<li>High-precision mode of MIKUMARI pulse<ul>
+<li>The MIKUMARI pulse function newly supports the high-precision mode. This mode can transmit the 4-bit extra data together with the pulse, i.e., the 3-bit pulse type and the 4-bit data are simultaneously transferred. The existing pulse transmission mode is called the low-latency mode.</li>
+</ul>
+</li>
+<li>CBT serdesOffset and firstBitPatt ports<ul>
+<li>The serdesOffset and firstBitPatt ports are added to the CbtLane. The serdesOffset port provides the relative phase between the input bit pattern and the ClkPar signal. This port is for the Local Area Common Clock Protocol (LACCP).</li>
+<li>The firstBitPatt port provides the bit pattern before starting the bit-slip process. This port is for debug.</li>
+</ul>
+</li>
+<li>Support CDCM-8-2.5<ul>
+<li>CDCM-8-2.5 was tested with Kintex-7 FPGA with thr reference clock signal frequency of 125 MHz. MMCM was used for the clock signal recovery.</li>
+</ul>
+</li>
+<li>Disable the clock monitor function<ul>
+<li>The clock monitor function in the CBT was disabled.</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-21-jun-29-2024">Version 2.1 - Jun. 29, 2024</h2>
+<h3 id="improved">Improved</h3>
+<ul>
+<li>Enable again the clock monitor function<ul>
+<li>It was found that the clock monitor function is essential to deterministically set the IDELAY tap value in the initialization process.</li>
+</ul>
+</li>
+<li>Slightly modify the CDCM-RX initialization process.</li>
+</ul></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+                <p>KEK IPNS</p>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script src="../../js/bootstrap.bundle.min.js"></script>
+        <script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../js/base.js"></script>
+
+        <div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

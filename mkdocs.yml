@@ -34,7 +34,7 @@ plugins:
       author: Ryotaro Honda
       copyright: KEK IPNS
       cover_title: MIKUMARI User Guide
-      cover_subtitle: 2023.11.20
+      cover_subtitle: 2024.06.29
       enabled_if_env: ENABLE_PDF_EXPORT
       output_path: ../pdf/MIKUMARI_UG.pdf
 

@@ -20,3 +20,11 @@
     - CDCM-8-2.5 was tested with Kintex-7 FPGA with thr reference clock signal frequency of 125 MHz. MMCM was used for the clock signal recovery.
 - Disable the clock monitor function
     - The clock monitor function in the CBT was disabled.
+
+
+## Version 2.1 - Jun. 29, 2024
+
+### Improved
+- Enable again the clock monitor function
+    - It was found that the clock monitor function is essential to deterministically set the IDELAY tap value in the initialization process.
+- Slightly modify the CDCM-RX initialization process.

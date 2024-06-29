@@ -352,7 +352,7 @@ Currently, the CBT supports CDCM-10-1.5 (CDCM-8-1.5) and CDCM-10-2.5; they can t
 The CBT starts the initialization process when the following conditions are met.
 
 - srst and initIn are low.
-- ~~The clock monitor detects a clock like signal in the RX signal.~~
+- The clock monitor detects a clock like signal in the RX signal.
 
 The IDELAYE2 tap number is adjusted so as to stabilize the sampled data using the idle pattern, and bitslip is performed so as to reproduce the bit pattern of ``0b11111_00000``. If kFixIdealyTap is true, the value on tapValueIn is set to IDEALY. After initializing IOSERDES, some T-type characters are exchanged to confirm that both end points are actually ready for communication each other. Then, the cbtLaneUp is asserted.
 

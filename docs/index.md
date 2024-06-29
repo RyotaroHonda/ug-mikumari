@@ -14,6 +14,10 @@
 
 * Descriptions for version 2.0
 
+**2024.06.29**
+
+* Descriptions for version 2.1
+
 ## MIKUMARI source codes
 
 The source codes are [here](https://github.com/RyotaroHonda/mikumari)

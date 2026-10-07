@@ -1,2 +1,4 @@
 site/
-pdf/
+venv/
+.venv/
+.DS_Store

@@ -1,20 +1,29 @@
 # Release notes
 
-## Version 3.2 - Aug. 3, 2026
+## Version 3.2 - Jul. 31, 2026
 
 ### New
 
-- Deprecation of the bislip function of the ISERDESE2 primitive and implementation of a bit buffer
-    - To provide functionality equivalent to bitslip, the bit buffer implemented for UltraScale devices was also applied to 7-series devices.
-- Implementation of the CBT phase readjustment function during communication
-    - A function to readjust IDELAY and the bit-buffer window in CBT after link-up has been implemented. This is to address situations where transmission path length changes due to factors such as temperature fluctuations, causing data and clock phase mismatches at the primary node. An external circuit to measure phase variations is required to use this function.
+- Dynamic delay adjustment during communication
+    - The Master CBT can readjust IDELAY after link-up in response to external `reqIdelayShift` requests.
+    - For CDCM-8, adjustment at the tap-range boundary also shifts the bit-buffer window. The `reqShutOffOut` and `shutOffAckIn` ports coordinate temporary suspension and restart of communication with the upper-layer protocol.
+    - The new `delayPerTap` output reports the IDELAY delay per tap in picoseconds.
 
 ## Version 3.1.1 - Mar. 11, 2026
 
-### Improved
+### Fixed
 
-- Improve the algorithm for the IDELAY adjustment
-    - In previous versions of MIKUMARI, it was sometimes impossible to set the tap value exactly at the center of the stability island during automatic IDELAY adjustment, but this has been improved so that the value can now be set precisely at the center.
+- Corrected the plateau search and threshold comparison in the 7-series automatic IDELAY adjustment algorithm.
+    - Regions narrower than the required threshold are rejected. Regions whose length equals the threshold are now accepted.
+
+## Version 3.1 - Feb. 25, 2026
+
+### New + Improved
+
+- Improved the automatic IDELAY adjustment algorithm.
+    - The tap value is set to the midpoint of a stable region using its detected left and right edges.
+- Added a bit buffer for 7-series CDCM-8 receivers.
+    - The `IserdesBitslip` module replaces the ISERDESE2 primitive's BITSLIP function with bit-window selection in logic.
 
 ## Version 3.0 - Dec. 16, 2025
 
@@ -22,7 +31,7 @@
 
 - Applicable devices have been expanded to AMD Xilinx UltraScale/UltraScale+ FPGAs.
 
-## Version 2.1 - Jun. 29, 2024
+## Version 2.1 - Jun. 1, 2024
 
 ### Improved
 
@@ -44,7 +53,7 @@
 - Disable the clock monitor function
     - The clock monitor function in the CBT was disabled.
 
-## Version 1.1 - Dec. 13, 2023
+## Version 1.1 - Dec. 12, 2023
 
 ### New + Improved
 

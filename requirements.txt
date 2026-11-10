@@ -45,5 +45,5 @@ pyyaml_env_tag==1.1
 requests==2.34.2
 setuptools==83.0.0
 six==1.17.0
-urllib3==2.7.0
+urllib3==2.8.0
 watchdog==6.0.0

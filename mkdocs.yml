@@ -40,5 +40,6 @@ nav:
   - Get-Started: get-started/main.md
   - CBT: cbt/cbt.md
   - Mikumari-Link: mikumari-link/link.md
+  - Usage: usage/usage.md
 #  - Software: software/main.md
-#  - Practical Usage: practical/main.md
+

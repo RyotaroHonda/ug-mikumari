@@ -11,341 +11,88 @@ Currently, the CBT supports the CDCM-10-2.5, CDCM-10-1.5, CDCM-8-2.5, and CDCM-8
 
 ## Interface of CBT
 
-The top-level block of the CBT is **CbtLane**. The global parameters for the CBT are defined in ``defCDCM.vhd``. The CbtLane's entity port structure is as follows.
+**CbtLane** is the top-level CBT module. Types and width constants are defined in `defCDCM.vhd`.
 
-```VHDL
-entity CbtLane is
-  generic
-    (
-      kFamily          : string;  -- US: UltraScale devices, 7S: 7-Series devices
-      -- CDCM-Mod-Pattern --
-      kCdcmModWidth    : integer; -- # of time slices of the CDCM signal
-      -- CDCM-TX --
-      kIoStandardTx    : string;  -- IO standard of OBUFDS
-      kTxPolarity      : boolean; -- If true, inverse Tx polarity
-      -- CDCM-RX --
-      genIDELAYCTRL    : boolean; -- If TRUE, IDELAYCTRL is instantiated.
-      kDiffTerm        : boolean; -- IBUF DIFF_TERM
-      kRxPolarity      : boolean; -- If true, inverts Rx polarity
-      kIoStandardRx    : string;  -- IOSTANDARD of IBUFDS
-      kIoDelayGroup    : string;  -- IODELAY_GROUP for IDELAYCTRL and IDELAY
-      kFixIdelayTap    : boolean; -- If TRUE, value on tapValueIn is set to IDELAY
-      kFreqFastClk     : real;    -- Frequency of SERDES fast clock (MHz).
-      kFreqRefClk      : real;    -- Frequency of refclk for IDELAYCTRL (MHz).
-      kBitslice0       : boolean; -- If the RX side is routed to the IO pad on the Bitslice0, set TRUE.
-      -- Encoder/Decoder
-      kNumEncodeBits   : integer:= 2;  -- 1:CDCM-10-1.5 or 2:CDCM-10-2.5
-      -- Master/Slave
-      kCbtMode         : string;
-      -- DEBUG --
-      enDebug          : boolean:= false
-    );
-  port
-    (
-      -- SYSTEM port --
-      srst          : in std_logic; -- Reset logics driven by clkPar. Transceiver function reset. (active high)
-      pwrOnRst      : in std_logic; -- Reset logics driven by clkIndep and clkIdelayRef. (active high)
-      clkSerTx      : in std_logic; -- From BUFG (driving serial data line)
-      clkSerRx      : in std_logic; -- From BUFG (driving serial data line)
-      clkPar        : in std_logic; -- From BUFG
-      clkIndep      : in std_logic; -- Independent clock for monitor
-      clkIdelayRef  : in std_logic; -- REFCLK input for IDELAYCTRL. Must be independent from clkPar.
-      initIn        : in std_logic; -- Re-do the initialization process. Sync with clkPar.
-      tapValueIn    : in std_logic_vector(kWidthTap-1 downto 0); -- IDELAY TAP value input (active when kFixIdelayTap is true)
+### Generics
 
-      -- Dynamic Control --
-      reqIdelayShift : in std_logic_vector(kReqIdelayShiftBits-1 downto 0); -- "00": No shift. "01": Shift plus by 1 bit. "10": Shift minus by 1 bit. "11": Reserved.
-      reqShutOffOut : out std_logic; -- Request signal to the upper-layer protocol to shutoff communication.
-      shutOffAckIn  : in std_logic; -- Acknowledge signal from the upper-layer protocol for the shutoff request.
+Generics without a default must be specified when instantiating `CbtLane`.
 
-      -- Status --
-      cbtLaneUp     : out std_logic; -- Indicates that CBT is ready for communication
-      tapValueOut   : out std_logic_vector(kWidthTap-1 downto 0); -- IDELAY TAP value output
-      bitslipNum    : out std_logic_vector(kWidthBitSlipNum-1 downto 0); -- Number of bitslip made
-      serdesOffset  : out signed(kWidthSerdesOffset-1 downto 0);
-      firstBitPatt  : out CdcmPatternType; -- ISERDES output pattern after finishing the idelay adjustment
-      cntValueOutInit : out std_logic_vector(kCNTVALUEbit-1 downto 0);       -- Initial value of IDELAYE3 of the master side
-      cntValueOutSlaveInit : out std_logic_vector(kCNTVALUEbit-1 downto 0);  -- Initial value of IDELAYE3 of the slave side
-      dataOutRxShift : out std_logic_vector(kDataOutRxShiftBits-1 downto 0);
-      delayPerTap   : out std_logic_vector(kBitDelayPerTap-1 downto 0);
+| Generic | Description |
+| --- | --- |
+| `kFamily` | FPGA family: `"7S"` for 7-series; `"US"` for UltraScale/UltraScale+. |
+| `kCdcmModWidth` | CDCM time slices: `8` for CDCM-8; `10` for CDCM-10. |
+| `kIoStandardTx` | TX differential output buffer I/O standard. |
+| `kTxPolarity` | Invert TX polarity when `true`. |
+| `genIDELAYCTRL` | Instantiate IDELAYCTRL when `true`. |
+| `kDiffTerm` | Enable differential input termination when `true`. |
+| `kRxPolarity` | Invert RX polarity when `true`. |
+| `kIoStandardRx` | RX differential input buffer I/O standard. |
+| `kIoDelayGroup` | IODELAY_GROUP for IDELAYCTRL and delay primitives. |
+| `kFixIdelayTap` | Use `tapValueIn` for initialization instead of automatic tap adjustment when `true`. |
+| `kFreqFastClk` | SERDES serial clock frequency in MHz. |
+| `kFreqRefClk` | IDELAYCTRL reference clock frequency in MHz. |
+| `kBitslice0` | Set `true` when RX uses BITSLICE_0 on UltraScale devices. |
+| `kNumEncodeBits` | CDCM payload bits per `clkPar` cycle: `1` for 1.5 modes; `2` for 2.5 modes. |
+| `kCbtMode` | CBT operating mode: `"Master"` or `"Slave"`. |
+| `enDebug` | Enable the preset `mark_debug` attributes. |
 
-      -- Error --
-      patternErr    : out std_logic; -- Indicates CDCM waveform pattern is collapsed.
-      idelayErr     : out std_logic; -- Attempted bitslip but the expected pattern was not found.
-      bitslipErr    : out std_logic; -- Bit pattern which does not match the CDCM rule is detected.
-      watchDogErr   : out std_logic; -- Watch dog can't eat dogfood within specified time. The other side seems to be down.
+### Clock/Reset
 
-      -- Data I/F --
-      isKTypeTx     : in std_logic; -- 1: Generate a K type character. 0: D type character.
-      dataInTx      : in CbtUDataType;
-      validInTx     : in std_logic; -- 1: charIn is valid. Encode and send it to CDCM-TX.
-                                    -- 0: Send idle pattern;
-      txBeat        : out std_logic; -- Indicates encoder cycle.
-      txAck         : out std_logic; -- Acknowledge to validInTx.
+| Port | Direction | Description |
+| --- | --- | --- |
+| `srst` | In | Active-high reset for `clkPar` logic and the transceiver. |
+| `pwrOnRst` | In | Active-high reset for logic driven by `clkIndep` and `clkIdelayRef`. |
+| `clkSerTx` | In | Serial TX clock from BUFG: 5 x `clkPar` for CDCM-10; 4 x `clkPar` for CDCM-8. |
+| `clkSerRx` | In | Serial RX clock from BUFG: 5 x `clkPar` for CDCM-10; 4 x `clkPar` for CDCM-8. |
+| `clkPar` | In | Parallel clock from BUFG. |
+| `clkIndep` | In | Independent clock for the clock monitor. |
+| `clkIdelayRef` | In | IDELAYCTRL reference clock, independent of `clkPar`. |
 
-      isIdleRx      : out std_logic; -- Indicates present character is idle.
-      isKTypeRx     : out std_logic; -- 1: K type character. 0: D type character.
-      dataOutRx     : out CbtUDataType;
-      validOutRx    : out std_logic; -- 1: charOut is valid.
+### Initialization/Status
 
-      -- CDCM ports --
-      cdcmTxp       : out std_logic; -- Connect to TOPLEVEL port
-      cdcmTxn       : out std_logic; -- Connect to TOPLEVEL port
-      cdcmRxp       : in std_logic;  -- Connect to TOPLEVEL port
-      cdcmRxn       : in std_logic;  -- Connect to TOPLEVEL port
-      modClock      : out std_logic  -- CDCM modulated clock.
+| Port | Direction | Description |
+| --- | --- | --- |
+| `initIn` | In | Restart initialization. Synchronous to `clkPar`. |
+| `tapValueIn` | In | IDELAY tap setting used when `kFixIdelayTap` is `true`. |
+| `reqIdelayShift` | In | `"00"`: no adjustment; `"01"`: increase delay by one step of `tapValueOut`; `"10"`: decrease by one step; `"11"`: reserved. |
+| `reqShutOffOut` | Out | Request the upper-layer protocol to suspend communication for readjustment. |
+| `shutOffAckIn` | In | Upper-layer acknowledgement of `reqShutOffOut`. |
+| `delayPerTap` | Out | Delay per tap in picoseconds. |
+| `cbtLaneUp` | Out | High when the CBT is ready for communication. |
+| `tapValueOut` | Out | Current IDELAY tap setting. |
+| `bitslipNum` | Out | Current bitslip position; also updated during CDCM-8 dynamic adjustment. |
+| `serdesOffset` | Out | Signed phase offset between the input bit pattern and `clkPar` for LACCP (CDCM-8 only). |
+| `firstBitPatt` | Out | ISERDES pattern captured after IDELAY adjustment, before bitslip. |
+| `cntValueOutInit` | Out | Initial master delay counter value (`CNTVALUEOUT`) for UltraScale CDCM-8; zero on 7-series. |
+| `cntValueOutSlaveInit` | Out | Initial slave delay counter value (`CNTVALUEOUT`) for UltraScale CDCM-8; zero on 7-series. |
+| `patternErr` | Out | A received waveform violates the CDCM pattern. |
+| `idelayErr` | Out | IDELAY adjustment failed. |
+| `bitslipErr` | Out | SERDES bitslip failed to find the expected pattern. |
+| `watchDogErr` | Out | Watchdog timeout; the other endpoint appears to be down. |
 
-    );
-end CbtLane;
-```
+### Data I/F
 
-<table class="vmgr-table">
-  <thead><tr>
-    <th class="nowrap"><span class="mgr-10">Port </span></th>
-    <th class="nowrap"><span class="mgr-10">In/Out</span></th>
-    <th class="nowrap"><span class="mgr-10">Comment</span></th>
-  </tr></thead>
-  <tbody>
-  <tr><td class="tcenter" colspan=4><b>Generic port</b></td></tr>
-  <tr>
-    <td>kFamily</td>
-    <td class="tcenter">-</td>
-    <td>Select US or 7S for UltraScale devices and 7-Series devices, respectively.</td>
-  </tr>
-  <tr>
-    <td>kCdcmModWidth</td>
-    <td class="tcenter">-</td>
-    <td>Select 8 or 10 for CDCM-8-XX and CDCM-10-XX, respectively.</td>
-  </tr>
-  <tr>
-    <td>kIoStandardTx</td>
-    <td class="tcenter">-</td>
-    <td>Tx port IO standard, e.g., LVDS.</td>
-  </tr>
-  <tr>
-    <td>kTxPolarity</td>
-    <td class="tcenter">-</td>
-    <td>If it's true, the TX signal polarity is reversed. Use it when the differential signal p/n connection is inverse on FEE.</td>
-  </tr>
-  <tr>
-    <td>genIDELAYCTRL</td>
-    <td class="tcenter">-</td>
-    <td>If it's true, the IDELAYCTRL primitive is instantiated in the CBT.</td>
-  </tr>
-  <tr>
-    <td>kDiffTerm</td>
-    <td class="tcenter">-</td>
-    <td>Enable the internal 100-ohm termination register in FPGA.</td>
-  </tr>
-  <tr>
-    <td>kRxPolarity</td>
-    <td class="tcenter">-</td>
-    <td>If it's true, the RX signal polarity is reversed. Use it when the differential signal p/n connection is inverse on FEE.</td>
-  </tr>
-  <tr>
-    <td>kIoDelayGroup</td>
-    <td class="tcenter">-</td>
-    <td>Set the IODELAY_GROUP constraint to the IDELAYCTRL and IDELAYE2 primitives in the CBT.</td>
-  </tr>
-  <tr>
-    <td>kFixIdelayTap</td>
-    <td class="tcenter">-</td>
-    <td>If it is true, the automatic IDELAY tap adjustment function is disabled. Instead, the value on tapValueIn is set to IDELAY.</td>
-  </tr>
-  <tr>
-    <td>kFreqFastClk</td>
-    <td class="tcenter">-</td>
-    <td>The frequency value of the serial clock. It is used to determine the tap number for adjusting IDELAYE2</td>
-  </tr>
-  <tr>
-    <td>kFreqRefClk</td>
-    <td class="tcenter">-</td>
-    <td>The frequency value for IDELAYCTRL. It is used to determine the tap number for adjusting IDELAYE2</td>
-  </tr>
-  <tr>
-    <td>kBitslice0</td>
-    <td class="tcenter">-</td>
-    <td>Valid only on UltraScale devices. Set to TRUE if the RX is connected to an I/O on bitslice 0. Always set to FALSE for 7-series devices.</td>
-  </tr>
-  <tr>
-    <td>kNumEncodeBits</td>
-    <td class="tcenter">-</td>
-    <td>Set the payload size of the CDCM signal. Set 1 or 2. 1: CDCM-10-1.5. 2: CDCM-10-2.5. Currently, CDCM-8-2.5 is not supported.</td>
-  </tr>
-    <td>kCbtMode</td>
-    <td class="tcenter">-</td>
-    <td>Set Master or Slave. The CBT runs with the designated mode.</td>
-  </tr>
-  </tr>
-    <td>enDebug</td>
-    <td class="tcenter">-</td>
-    <td>Enable preset mark_debug constraints. The debug core will be implemented.</td>
-  </tr>
-  <tr><td class="tcenter" colspan=4><b>IO port</b></td></tr>
-  <tr><td colspan=4><b>System port</b></td></tr>
-  <tr>
-    <td>srst</td>
-    <td class="tcenter">In</td>
-    <td>Asynchronous assert, synchronous de-assert reset. Reset logics driven by clkPar. It is expected that this reset comes from the PLL lock signal generating clkPar and clkSer signals. (active high) </td>
-  </tr>
-  <tr>
-    <td>pwrOnRst</td>
-    <td class="tcenter">In</td>
-    <td>This signal resets logics driven by clkIndep and clkIdelayRef. It is expected that this signal goes high once after power on, and thus it is generated by the PLL lock signal generating clkIndep and clkIdelayRef. (active high) </td>
-  </tr>
-  <tr>
-    <td>clkSerTX</td>
-    <td class="tcenter">In</td>
-    <td>Serial clock input for TX. The clock skew must be adjusted between clkSer and clkPar. For 7-series devices, this signal should be identical with clkSerRX. </td>
-  </tr>
-  <tr>
-    <td>clkSerRX</td>
-    <td class="tcenter">In</td>
-    <td>Serial clock input for RX. The clock skew must be adjusted between clkSer and clkPar. For 7-series devices, this signal should be identical with clkSerTX. </td>
-  </tr>
-  <tr>
-    <td>clkPar</td>
-    <td class="tcenter">In</td>
-    <td>Parallel clock input. The clock skew must be adjusted between clkSer and clkPar. Status, error, and Data I/F ports are synchronized with this clock.</td>
-  </tr>
-  <tr>
-    <td>clkIndep</td>
-    <td class="tcenter">In</td>
-    <td>The independent clock from the clkPar. Its clock frequency should be clkPar < clkIndep < 2*clkPar. If the frequency is exactly twice of clkPar, you could get a trouble.</td>
-  </tr>
-  <tr>
-    <td>clkIdelayRef</td>
-    <td class="tcenter">In</td>
-    <td>REFCLK input for IDELAYCTRL. It must be independent from clkPar.</td>
-  </tr>x
-  <tr>
-    <td>initIn</td>
-    <td class="tcenter">In</td>
-    <td>If it is high, the CBT re-do the initialization process. This signal must be synchronized with clkPar.</td>
-  </tr>
-  <tr>
-    <td>tapValueIn</td>
-    <td class="tcenter">In</td>
-    <td>IDELAY TAP value input. This port is active if kFixIdelayTap is true.</td>
-  </tr>
-  <tr><td colspan=4><b>Dynamic Control port</b></td></tr>
-  <tr>
-    <td>cbtLaneUp</td>
-    <td class="tcenter">Out</td>
-    <td>This goes high when the CBT becomes ready for communication after finishing the initialization process. </td>
-  </tr>
-  <tr>
-    <td>tapValueOut</td>
-    <td class="tcenter">Out</td>
-    <td>The IDELAY tap value currently used. </td>
-  </tr>
-  <tr>
-    <td>bitslipNum</td>
-    <td class="tcenter">Out</td>
-    <td>The number indicating how many bitslip is made in the initialization process.</td>
-  </tr>
-  <tr>
-    <td>serdesOffset</td>
-    <td class="tcenter">Out</td>
-    <td>The port provides the value indicating the phase difference between the input bit patter and the ClkPar signal. This is the special port for LACCP, not for users. This port works only with CDCM-8-XX modes. </td>
-  </tr>
-  <tr>
-    <td>firstBitPatt</td>
-    <td class="tcenter">Out</td>
-    <td>This port provides the bit pattern before starting the bit-slip process. This is for debug, not for users. </td>
-  </tr>
-  <tr>
-    <td>patternErr</td>
-    <td class="tcenter">Out</td>
-    <td>This goes high when the waveform, which is not matched with the CDCM modulation pattern, is detected. Data is broken. </td>
-  </tr>
-  <tr>
-    <td>idelayErr</td>
-    <td class="tcenter">Out</td>
-    <td>This goes high if the appropriate tap value, which provides the stable communication, was not found. </td>
-  </tr>
-  <tr>
-    <td>bitslipErr</td>
-    <td class="tcenter">Out</td>
-    <td>This goes high when the reference bit pattern cannot be detected during the initialization process. Re-initialization is necessary.</td>
-  </tr>
-  <tr>
-    <td>watchDotErr</td>
-    <td class="tcenter">Out</td>
-    <td>This goes high when the watch dog timer can't eat dogfood within specified time. The other side link seems to be down.</td>
-  </tr>
-  <tr>
-    <td>isKTypeTx</td>
-    <td class="tcenter">In</td>
-    <td>If this is high, the current TX data is translated to a K-type character. If low, the TX data becomes a D-type character.</td>
-  </tr>
-  <tr>
-    <td>dataInTx</td>
-    <td class="tcenter">In</td>
-    <td>8-bit TX data.</td>
-  </tr>
-  <tr>
-    <td>validInTx</td>
-    <td class="tcenter">In</td>
-    <td>It denotes that the current dataInTx is valid. It is the request for the CBT to transmit it.</td>
-  </tr>
-  <tr>
-    <td>txBeat</td>
-    <td class="tcenter">Out</td>
-    <td>This signal goes high once per a CBT character transfer cycle for one clock cycle. It indicates a boundary of the transfer cycle.</td>
-  </tr>
-  <tr>
-    <td>txAck</td>
-    <td class="tcenter">Out</td>
-    <td>The acknowledge signal respect to validInTx. This goes high when the dataInTx is latched at the same timing of the txBeat.</td>
-  </tr>
-  <tr>
-    <td>isIdleRx</td>
-    <td class="tcenter">Out</td>
-    <td>This goes high when the current dataOutRx is a idle data.</td>
-  </tr>
-  <tr>
-    <td>isKTypeRx</td>
-    <td class="tcenter">Out</td>
-    <td>This goes high when the current dataOutRx is a K-Type data.</td>
-  </tr>
-  <tr>
-    <td>dataOutRx</td>
-    <td class="tcenter">Out</td>
-    <td>8-bit RX data.</td>
-  </tr>
-  <tr>
-    <td>validOutRx</td>
-    <td class="tcenter">Out</td>
-    <td>This goes high when the current dataOutRX valid both for D- and K-types data.</td>
-  </tr>
-  <tr>
-    <td>cdcmTxp</td>
-    <td class="tcenter">Out</td>
-    <td>Transmission line positive. Connect to the toplevel port.</td>
-  </tr>
-  <tr>
-    <td>cdcmTxn</td>
-    <td class="tcenter">Out</td>
-    <td>Transmission line negative. Connect to the toplevel port.</td>
-  </tr>
-  <tr>
-    <td>cdcmRxp</td>
-    <td class="tcenter">In</td>
-    <td>Receive line positive. Connect to the toplevel port.</td>
-  </tr>
-  <tr>
-    <td>cdcmRxn</td>
-    <td class="tcenter">In</td>
-    <td>Receive line negative. Connect to the toplevel port.</td>
-  </tr>
-  <tr>
-    <td>modClock</td>
-    <td class="tcenter">Out</td>
-    <td>The CDCM modulated clock output. It is valid in the secondary mode.</td>
-  </tr>
-</tbody>
-</table>
+| Port | Direction | Description |
+| --- | --- | --- |
+| `isKTypeTx` | In | TX character type: `1` for K-type; `0` for D-type. |
+| `dataInTx` | In | 8-bit TX user data. |
+| `validInTx` | In | High when `dataInTx` is valid; low requests an idle pattern. |
+| `txBeat` | Out | Indicates the encoder character cycle. |
+| `txAck` | Out | Acknowledges acceptance of valid TX data. |
+| `isIdleRx` | Out | High when the received character is idle. |
+| `isKTypeRx` | Out | RX character type: `1` for K-type; `0` for D-type. |
+| `dataOutRx` | Out | 8-bit RX user data. |
+| `validOutRx` | Out | High when `dataOutRx` is valid. |
+
+### Physical I/F
+
+| Port | Direction | Description |
+| --- | --- | --- |
+| `cdcmTxp` | Out | Positive differential TX output. Connect to the top-level port. |
+| `cdcmTxn` | Out | Negative differential TX output. Connect to the top-level port. |
+| `cdcmRxp` | In | Positive differential RX input. Connect to the top-level port. |
+| `cdcmRxn` | In | Negative differential RX input. Connect to the top-level port. |
+| `modClock` | Out | Received modulated clock. For UltraScale CDCM-8 with `kBitslice0=true`, outputs a virtual clock. |
 
 ## CBT characters
 
@@ -357,12 +104,41 @@ Currently, the CBT supports CDCM-10-1.5 (CDCM-8-1.5) and CDCM-10-2.5; they can t
 
 ## Initialization process
 
-The CBT starts the initialization process when the following conditions are met.
+`CbtLane` initializes the receive sampling delay, the SERDES bit position, and the CBT character boundary before completing the Master/Slave handshake. The sequence depends on `kCbtMode`.
 
-- srst and initIn are low.
-- The clock monitor detects a clock like signal in the RX signal.
+### Reset and restart conditions
 
-The IDELAYE2 tap number is adjusted so as to stabilize the sampled data using the idle pattern, and bitslip is performed so as to reproduce the bit pattern of ``0b11111_00000``. If kFixIdealyTap is true, the value on tapValueIn is set to IDEALY. After initializing IOSERDES, some T-type characters are exchanged to confirm that both end points are actually ready for communication each other. Then, the cbtLaneUp is asserted.
+`srst` resets the transceiver and the `clkPar` logic. `pwrOnRst` resets the independent-domain logic and IDELAY initialization logic. Initialization proceeds after reset and internal initialization requests are released; deasserting `initIn` alone does not immediately start the sequence because its request is stretched internally for more than `2 * kMaxWDT` cycles of `clkPar`.
+
+| Mode | Initialization requests generated by `CbtLane` |
+| --- | --- |
+| `"Master"` | The stretched `initIn` request, RX clock loss detected by `ClockMonitor`, or an internal reset interval triggered by the RX quality monitor or `watchDogErr`. `ClockMonitor` uses `clkIndep`; clock loss holds the receiver in initialization until the RX clock is detected again. |
+| `"Slave"` | The stretched `initIn` request or the RX quality monitor request. No `ClockMonitor` is instantiated in this mode. |
+
+In both modes, `CbtRx` also requests reinitialization on a watchdog timeout or a handshake timeout. On 7-series devices with `genIDELAYCTRL=true`, SERDES initialization waits for IDELAYCTRL `RDY`. For UltraScale CDCM-8 automatic adjustment, it waits for the initial master and slave IDELAY counter values to be captured.
+
+### Sampling delay and SERDES alignment
+
+With `kFixIdelayTap=false`, the receiver scans the IDELAY settings, checks for an unchanged sampled idle pattern, and selects the center of a sufficiently wide stable region. With `kFixIdelayTap=true`, it loads `tapValueIn` and still checks sample stability before proceeding. The selected setting is reported by `tapValueOut`.
+
+After IDELAY adjustment, the receiver captures `firstBitPatt` and performs bitslip until the sampled pattern matches `kIdleCDCM` for 16 consecutive checks (`kPattOkThreshold`). In the RTL's bit-vector order, `kIdleCDCM` is `00000_11111` for CDCM-10. CDCM-8 uses `0000_1111`, padded with a leading `0` and a trailing `1` for the same internal 10-bit comparison. Completion of IDELAY adjustment and bitslip sets the internal status to `kInitFinish`; this does not yet assert `cbtLaneUp`.
+
+### Master/Slave handshake
+
+The receiver state machine controls its local transmitter through the internal back channel. `SendZero` disables transmission by sending an all-zero pattern, `SendIdle` sends the idle pattern, and `SendInitPattern` alternates `kInitPCDCM` and `kInitMCDCM`. The initialization T-type characters I1 and I2 are selected by `GetInit1Char(kNumEncodeBits)` and `GetInit2Char(kNumEncodeBits)`.
+
+| Stage | Master | Slave |
+| --- | --- | --- |
+| Local SERDES initialization | Sends idle until its local status reaches `kInitFinish`, then sends the initialization waveform. | Sends zero until its local status reaches `kInitFinish`, then sends idle. |
+| Initialization waveform detection | Counts 16 received `kInitPCDCM` or `kInitMCDCM` patterns after `kInitFinish`, then sends I1. | Counts the same 16 patterns, then sends the initialization waveform. |
+| CBT character alignment | Sends I1 and enables decoder alignment. Once aligned, sends I2. | Sends the initialization waveform and enables decoder alignment. Once aligned, sends I1. |
+| Readiness confirmation | Counts eight valid received I2 characters, then enters `StateCbtRxUp`. | On the first valid received I2, starts sending I2. It then counts eight valid received characters other than I2 before entering `StateCbtRxUp`. |
+
+`CdcmRxDecoder` aligns the CBT character boundary to I1 separately from the SERDES bitslip. The initialization waveform and readiness counters accumulate matches; they do not require consecutive matches. Initialization T-type characters are handled internally, and user TX data is not acknowledged during these handshake stages.
+
+`CbtRx` asserts its internal RX-up status in `StateCbtRxUp`; `CbtTx` asserts TX-up on an encoder beat in that state. `cbtLaneUp` is asserted when both are high and their conjunction has propagated through the 128-stage `clkPar` delay pipeline (`kDelayLaneUp`).
+
+If IDELAY adjustment or bitslip fails, `idelayErr` or `bitslipErr` is asserted and the corresponding adjustment state machine retries. A handshake timeout causes `CbtRx` to restart initialization.
 
 ## Error detection
 

@@ -1,5 +1,17 @@
 # Release notes
 
+## Version 3.2.1 - Oct. 9, 2026
+
+### Fixed
+
+- Corrected pulse busy handling in `MikumariTx`.
+    - `busyPulseTx` remains high while a pulse is reserved or being transmitted.
+    - Requests on `pulseIn` are ignored while busy in both Low-Latency and High-Precision modes.
+
+### Improved
+
+- Aligned HDL comments with the implementation, including serial clock ratios, IDELAY adjustment steps, error signals, and pulse mode behavior.
+
 ## Version 3.2 - Jul. 31, 2026
 
 ### New

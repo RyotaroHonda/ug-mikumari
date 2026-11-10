@@ -6,246 +6,62 @@ The MIKUMARI link is a link layer protocol to establish the communication link b
 - Define a frame structure, called the MIKUMARI frame, for the data transmission
 - One-shot pulse transmission with fixed latency using K-type characters.
 
-### Interface of MIKUAMRI link
+### Interface of MIKUMARI link
 
-The top-level block of the MIKUMARI link is **MikumariLane**. The global parameters for the MIKUMARI link are defined in ``defMikumari.vhd``. The MikumariLane's entity port structure is as follows.
+**MikumariLane** is the top-level MIKUMARI link module. Protocol constants and pulse types are defined in `defMikumari.vhd`; CBT data types are defined in `defCDCM.vhd`.
 
-```VHDL
-entity MikumariLane is
-  generic
-  (
-    -- CBT --
-    kNumEncodeBits    : integer:= 2;
-    -- MIKUMARI-Link --
-    enScrambler       : boolean:= true;
-    kHighPrecision    : boolean:= false;
-    -- DEBUG --
-    enDEBUG           : boolean:= false
-  );
-  port
-  (
-    -- SYSTEM port --------------------------------------------------------------------------
-    srst        : in std_logic; -- Asynchronous assert, synchronous de-assert reset. (active high)
-    clkPar      : in std_logic; -- From BUFG
-    cbtUpIn     : in std_logic; -- Cbt lane up signal
-    linkUp      : out std_logic; -- Mikumari link is up
+#### Generics
 
-    -- TX port ------------------------------------------------------------------------------
-    -- Data I/F --
-    dataInTx      : in CbtUDataType;       -- User data input.
-    validInTx     : in std_logic;          -- Indicate dataIn is valid.
-    frameLastInTx : in std_logic;          -- Indicate current dataIn is a last character in a normal frame.
-    txAck         : out std_logic;         -- Acknowledge to validIn signal.
+| Generic | Description |
+| --- | --- |
+| `kNumEncodeBits` | CDCM payload bits per `clkPar` cycle: `1` for 1.5 modes; `2` for 2.5 modes. Match the CBT setting. |
+| `enScrambler` | Enable the data scrambler and descrambler when `true`. |
+| `kHighPrecision` | Select High-Precision pulse mode when `true`; Low-Latency mode when `false`. |
+| `enDEBUG` | Enable the preset `mark_debug` attributes. |
 
-    pulseIn       : in std_logic;          -- Pulse input. Must be one-shot signal.
-    pulseTypeTx   : in MikumariPulseType;  -- 3-bit short message to be sent with pulse.
-    pulseRegTx    : in MikumariHpmRegType; -- 4-bit additional message transferred by the pulse
-    busyPulseTx   : out std_logic;         -- Under transmission of previous pulse. If high, pulseIn is ignored.
+#### System port
 
-    -- Cbt ports --
-    isKtypeOut  : out std_logic;
-    cbtDataOut  : out CbtUDataType;
-    cbtValidOut : out std_logic;
-    cbtTxAck    : in std_logic;
-    cbtTxBeat   : in std_logic;
+| Port | Direction | Description |
+| --- | --- | --- |
+| `srst` | In | Active-high reset for the MIKUMARI link. |
+| `clkPar` | In | Parallel clock from BUFG. Use the same clock as the CBT. |
+| `cbtUpIn` | In | CBT ready signal. Connect to `CbtLane.cbtLaneUp`. |
+| `linkUp` | Out | High when the MIKUMARI link is established. |
 
-    -- RX port ------------------------------------------------------------------------------
-    -- Data I/F --
-    dataOutRx   : out CbtUDataType;        -- User data output.
-    validOutRx  : out std_logic;           -- Indicate current dataOut is valid.
-    frameLastRx : out std_logic;           -- Indicate current dataOut is the last data in a normal frame.
-    checksumErr : out std_logic;           -- Check-sum error is happened in the present normal frame.
-    frameBroken : out std_logic;           -- Frame start position is not correctly detected
-    recvTermnd  : out std_logic;           -- Frame end position of the previsou frame is not correctly detected
+#### TX port
 
-    pulseOut    : out std_logic;           -- Reproduced one-shot pulse output.
-    pulseTypeRx : out MikumariPulseType;   -- 3-bit short message accompanying the pulse.
-    pulseRegRx  : out MikumariHpmRegType;  -- 4-bit additional message transferred by the pulse
+| Port | Direction | Description |
+| --- | --- | --- |
+| `dataInTx` | In | 8-bit TX frame payload. |
+| `validInTx` | In | High when `dataInTx` is valid. |
+| `frameLastInTx` | In | High when `dataInTx` is the last byte of the frame payload. |
+| `txAck` | Out | Acknowledges acceptance of valid TX data. |
+| `pulseIn` | In | One-cycle pulse transmission request. Accepted when `busyPulseTx` is low. |
+| `pulseTypeTx` | In | 3-bit pulse type, latched when `pulseIn` is accepted. |
+| `pulseRegTx` | In | 4-bit extra pulse data, latched when `pulseIn` is accepted in High-Precision mode. |
+| `busyPulseTx` | Out | High while a pulse is reserved or being transmitted; `pulseIn` is ignored. |
+| `isKtypeOut` | Out | High when `cbtDataOut` is K-type. Connect to `CbtLane.isKTypeTx`. |
+| `cbtDataOut` | Out | 8-bit data for the CBT. Connect to `CbtLane.dataInTx`. |
+| `cbtValidOut` | Out | High when `cbtDataOut` is valid. Connect to `CbtLane.validInTx`. |
+| `cbtTxAck` | In | CBT TX acknowledgement. Connect to `CbtLane.txAck`. |
+| `cbtTxBeat` | In | CBT character transmission cycle indicator. Connect to `CbtLane.txBeat`. |
 
-    -- Cbt ports --
-    isKtypeIn   : in std_logic; --
-    cbtDataIn   : in CbtUDataType;
-    cbtValidIn  : in std_logic
+#### RX port
 
-  );
-end MikumariLane;
-```
-
-<table class="vmgr-table">
-  <thead><tr>
-    <th class="nowrap"><span class="mgr-10">Port </span></th>
-    <th class="nowrap"><span class="mgr-10">In/Out</span></th>
-    <th class="nowrap"><span class="mgr-10">Comment</span></th>
-  </tr></thead>
-  <tbody>
-  <tr><td class="tcenter" colspan=4><b>Generic port</b></td></tr>
-  <tr>
-    <td>kNumEncodeBits</td>
-    <td class="tcenter">-</td>
-    <td>Payload size of the CDCM signal. Set 1 or 2. 1: CDCM-10-1.5. 2: CDCM-10-2.5. Set the same value given for the CBT.</td>
-  </tr>
-  <tr>
-    <td>enScrambler</td>
-    <td class="tcenter">-</td>
-    <td>If it's true, data scrambler is enabled. Enabling the scrambler is recommended for the better jitter performance.</td>
-  </tr>
-  <tr>
-    <td>kHighPrecision</td>
-    <td class="tcenter">-</td>
-    <td>If it's true, the high-precision mode of the MIKUMARI pulse transmission is enabled.</td>
-  </tr>
-  </tr>
-    <td>enDebug</td>
-    <td class="tcenter">-</td>
-    <td>Enable preset mark_debug constraints. The debug core will be implemented.</td>
-  </tr>
-  <tr><td class="tcenter" colspan=4><b>IO port</b></td></tr>
-  <tr>
-    <td>srst</td>
-    <td class="tcenter">In</td>
-    <td>Asynchronous assert, synchronous de-assert reset. (active high) </td>
-  </tr>
-  <tr>
-    <td>clkPar</td>
-    <td class="tcenter">In</td>
-    <td>Parallel clock input; it is the identical clock as for the CBT.</td>
-  </tr>
-  <tr>
-    <td>cbtUpIn</td>
-    <td class="tcenter">In</td>
-    <td>cbtLaneUp signal from the CBT. Connect to the cbtLaneUp port directly.</td>
-  </tr>
-  <tr>
-    <td>linkUp</td>
-    <td class="tcenter">Out</td>
-    <td>This goes high when the link connection is established. If this is high, access to the data I/F ports are valid.</td>
-  </tr>
-    <td>dataInTx</td>
-    <td class="tcenter">In</td>
-    <td>8-bit user data input, the frame payload.</td>
-  </tr>
-  <tr>
-    <td>validInTx</td>
-    <td class="tcenter">In</td>
-    <td>It denotes that the current dataInTx is valid. It is the request for the MIKUMARI link to transmit it.</td>
-  </tr>
-  <tr>
-    <td>frameLastInTx</td>
-    <td class="tcenter">In</td>
-    <td>This signal indicates that the current dataInTx is last 1-byte in this frame transmission cycle. If the MIKUMARI link detects this signal, the frame checksum and the frame-end K-type character (FEK) are inserted.</td>
-  </tr>
-  <tr>
-    <td>txAck</td>
-    <td class="tcenter">Out</td>
-    <td>The acknowledge signal respect to validInTx. This goes high when the dataInTx is latched.</td>
-  </tr>
-  <tr>
-    <td>pulseIn</td>
-    <td class="tcenter">In</td>
-    <td>One-shot pulse input, equal to the pulse transmission request. If the MIKUMARI link detects this signal when the busyPulseTx is low, the pulse K-type character is inserted. Pulse transmission request has higher priority than the validInTX. <b>Pulse width must be one-shot, 1 clock cycle.</b></td>
-  </tr>
-  <tr>
-    <td>pulseTypeTx</td>
-    <td class="tcenter">In</td>
-    <td>Pulse type input. This type value is transmitted together with a one-shot pulse. Currently, the pulse type width is 3-bit, and the 8-types of pulses can be transferred. The type value is latch when the pulseIn is high.</td>
-  </tr>
-  <tr>
-    <td>pulseRegTx</td>
-    <td class="tcenter">In</td>
-    <td>The 4-bit extra data to be transmitted together with a one-shot pulse. This port is active only with the high-precision mode. The value is latch when the pulseIn is high.</td>
-  </tr>
-  <tr>
-    <td>busyPulseTx</td>
-    <td class="tcenter">Out</td>
-    <td>Busy signal for pulse transmission. When it is high, the pulseIn input is ignored.</td>
-  </tr>
-  <tr>
-    <td>isKtypeOut</td>
-    <td class="tcenter">Out</td>
-    <td>It indicates that the current cbtDataOut is a K-type character. Connect to isKtypeTx of the CbtLane.</td>
-  </tr>
-  <tr>
-    <td>cbtDataOut</td>
-    <td class="tcenter">Out</td>
-    <td>8-bit data for the CBT. Connect to dataInTx of the CbtLane.</td>
-  </tr>
-  <tr>
-    <td>cbtValidOut</td>
-    <td class="tcenter">Out</td>
-    <td>It indicates that the current cbtDataOut is valid. Connect to validInTx of the CbtLane.</td>
-  </tr>
-  <tr>
-    <td>cbtTxAck</td>
-    <td class="tcenter">In</td>
-    <td>Acknowledge from the CBT respect to cbtValidOut. Connect to txAck of the CbtLane.</td>
-  </tr>
-  <tr>
-    <td>cbtTxBeat</td>
-    <td class="tcenter">In</td>
-    <td>The boundary of the CBT character transfer cycle. Connect to txBeat of the CbtLane.</td>
-  </tr>
-  <tr>
-    <td>dataOutRx</td>
-    <td class="tcenter">Out</td>
-    <td>8-bit user data output, received frame payload.</td>
-  </tr>
-  <tr>
-    <td>validOutRx</td>
-    <td class="tcenter">Out</td>
-    <td>Data valid. If this is high, the current dataOutRx is valid.</td>
-  </tr>
-  <tr>
-    <td>frameLastRx</td>
-    <td class="tcenter">Out</td>
-    <td>This goes high when the current dataOutRx is last 1-byte of the received frame payload.</td>
-  </tr>
-  <tr>
-    <td>checksumErr</td>
-    <td class="tcenter">Out</td>
-    <td>If it is high, the checksum miss match is happened in the present MIKUMARI frame.</td>
-  </tr>
-  <tr>
-    <td>frameBroken</td>
-    <td class="tcenter">Out</td>
-    <td>This signal goes high if the frame data body is received without detecting FSK. This indicates the communication error.</td>
-  </tr>
-  <tr>
-    <td>recvTermnd</td>
-    <td class="tcenter">Out</td>
-    <td>This signal goes high if FSK is received without detecting FEK. It means that some communication troubles happen during the previous frame receive. </td>
-  </tr>
-  <tr>
-    <td>pulseOut</td>
-    <td class="tcenter">Out</td>
-    <td>Received one-shot pulse output.</td>
-  </tr>
-  <tr>
-    <td>pulseTypeRx</td>
-    <td class="tcenter">Out</td>
-    <td>Received pulse type value. The value when pulseOut is high is valid.</td>
-  </tr>
-  <tr>
-    <td>pulseRegRx</td>
-    <td class="tcenter">Out</td>
-    <td>Received extra 4-bit data value. The value when pulseOut is high is valid.</td>
-  </tr>
-  <tr>
-    <td>isKtypeIn</td>
-    <td class="tcenter">In</td>
-    <td>It indicates that the current dataOutRx is a K-type character. Connect to isKTypeRx of the CbtLane.</td>
-  </tr>
-  <tr>
-    <td>cbtDataIn</td>
-    <td class="tcenter">In</td>
-    <td>8-bit data from the CBT. Connect to dataOutRx of the CbtLane.</td>
-  </tr>
-  <tr>
-    <td>cbtValidIn</td>
-    <td class="tcenter">In</td>
-    <td>It indicates that the current cbtDataIn is valid. Connect to validOutRx of the CbtLane.</td>
-  </tr>
-</tbody>
-</table>
+| Port | Direction | Description |
+| --- | --- | --- |
+| `dataOutRx` | Out | 8-bit RX frame payload. |
+| `validOutRx` | Out | High when `dataOutRx` is valid. |
+| `frameLastRx` | Out | High when `dataOutRx` is the last byte of the frame payload. |
+| `checksumErr` | Out | Checksum mismatch in the received frame. |
+| `frameBroken` | Out | Frame payload received without a frame start K-type character (FSK). |
+| `recvTermnd` | Out | FSK received before the previous frame's frame end K-type character (FEK). |
+| `pulseOut` | Out | Reproduced one-shot pulse. |
+| `pulseTypeRx` | Out | Received 3-bit pulse type, valid when `pulseOut` is high. |
+| `pulseRegRx` | Out | Received 4-bit extra pulse data, valid with `pulseOut` in High-Precision mode; zero in Low-Latency mode. |
+| `isKtypeIn` | In | High when `cbtDataIn` is K-type. Connect to `CbtLane.isKTypeRx`. |
+| `cbtDataIn` | In | 8-bit data from the CBT. Connect to `CbtLane.dataOutRx`. |
+| `cbtValidIn` | In | High when `cbtDataIn` is valid. Connect to `CbtLane.validOutRx`. |
 
 ### MIKUMARI frame and data transmission
 

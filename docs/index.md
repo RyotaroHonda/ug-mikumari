@@ -2,6 +2,10 @@
 
 ## Update history
 
+**2026.11.10**
+
+* Descriptions for version 3.2.1
+
 **2024.06.29**
 
 * Descriptions for version 2.1

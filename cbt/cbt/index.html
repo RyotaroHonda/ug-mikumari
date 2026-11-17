@@ -1,0 +1,1191 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="MIKUMARI User Guide">
+      
+      
+        <meta name="author" content="R.Honda">
+      
+      
+      
+        <link rel="prev" href="../../get-started/main/">
+      
+      
+        <link rel="next" href="../../mikumari-link/link/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>CBT - MIKUMARI User Guide</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../css/custom.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="cyan" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#cdcm-based-transceiver-cbt" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="MIKUMARI User Guide" class="md-header__button md-logo" aria-label="MIKUMARI User Guide" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            MIKUMARI User Guide
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              CBT
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/RyotaroHonda/ug-mikumari" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    ug-mikumari
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Top
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../release/release/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Release
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../get-started/main/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Get-Started
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  CBT
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../mikumari-link/link/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Mikumari-Link
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../usage/usage/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Usage
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="MIKUMARI User Guide" class="md-nav__button md-logo" aria-label="MIKUMARI User Guide" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    MIKUMARI User Guide
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/RyotaroHonda/ug-mikumari" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    ug-mikumari
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Top
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release/release/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Release
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../get-started/main/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Get-Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CBT
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CBT
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#interface-of-cbt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interface of CBT
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Interface of CBT">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#generics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Generics
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clockreset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Clock/Reset
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#initializationstatus" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Initialization/Status
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#data-if" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Data I/F
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#physical-if" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Physical I/F
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cbt-characters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CBT characters
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cdcm-encode-and-decode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CDCM encode and decode
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#initialization-process" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Initialization process
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Initialization process">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#reset-and-restart-conditions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reset and restart conditions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sampling-delay-and-serdes-alignment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sampling delay and SERDES alignment
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#masterslave-handshake" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Master/Slave handshake
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#error-detection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Error detection
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../mikumari-link/link/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Mikumari-Link
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usage/usage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Usage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="cdcm-based-transceiver-cbt">CDCM based transceiver (CBT)</h1>
+<p>The CBT is a physical layer of the MIKUMARI system. About the CBT, see also <a href="https://ieeexplore.ieee.org/document/10098185">Ref</a>. The roles of the CBT are as follows.</p>
+<ul>
+<li>Encode and decode the CDCM modulated waveform pattern</li>
+<li>Defines three types of CBT character using sign extension from 8-bit to 10-bit</li>
+<li>Initialize IOSERDES when detecting the cable (fiber) connection</li>
+</ul>
+<p>Currently, the CBT supports the CDCM-10-2.5, CDCM-10-1.5, CDCM-8-2.5, and CDCM-8-1.5. Then, the frequency ratios between the serial and parallel clock signals are 5 for CDCM-10-XX and 4 for CDCM-8-XX with the double-data-rate (DDR) mode, respectively. The SDR mode is not supported. In addition, only the differential signal is supported.
+<strong>If you want to use the Local Area Common Clock Protocol (LACCP), you need to select CDCM-8-XX modes. The serdesOffset port does not work with CDCM-10-XX modes.</strong></p>
+<h2 id="interface-of-cbt">Interface of CBT</h2>
+<p><strong>CbtLane</strong> is the top-level CBT module. Types and width constants are defined in <code>defCDCM.vhd</code>.</p>
+<h3 id="generics">Generics</h3>
+<p>Generics without a default must be specified when instantiating <code>CbtLane</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Generic</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>kFamily</code></td>
+<td>FPGA family: <code>"7S"</code> for 7-series; <code>"US"</code> for UltraScale/UltraScale+.</td>
+</tr>
+<tr>
+<td><code>kCdcmModWidth</code></td>
+<td>CDCM time slices: <code>8</code> for CDCM-8; <code>10</code> for CDCM-10.</td>
+</tr>
+<tr>
+<td><code>kIoStandardTx</code></td>
+<td>TX differential output buffer I/O standard.</td>
+</tr>
+<tr>
+<td><code>kTxPolarity</code></td>
+<td>Invert TX polarity when <code>true</code>.</td>
+</tr>
+<tr>
+<td><code>genIDELAYCTRL</code></td>
+<td>Instantiate IDELAYCTRL when <code>true</code>.</td>
+</tr>
+<tr>
+<td><code>kDiffTerm</code></td>
+<td>Enable differential input termination when <code>true</code>.</td>
+</tr>
+<tr>
+<td><code>kRxPolarity</code></td>
+<td>Invert RX polarity when <code>true</code>.</td>
+</tr>
+<tr>
+<td><code>kIoStandardRx</code></td>
+<td>RX differential input buffer I/O standard.</td>
+</tr>
+<tr>
+<td><code>kIoDelayGroup</code></td>
+<td>IODELAY_GROUP for IDELAYCTRL and delay primitives.</td>
+</tr>
+<tr>
+<td><code>kFixIdelayTap</code></td>
+<td>Use <code>tapValueIn</code> for initialization instead of automatic tap adjustment when <code>true</code>.</td>
+</tr>
+<tr>
+<td><code>kFreqFastClk</code></td>
+<td>SERDES serial clock frequency in MHz.</td>
+</tr>
+<tr>
+<td><code>kFreqRefClk</code></td>
+<td>IDELAYCTRL reference clock frequency in MHz.</td>
+</tr>
+<tr>
+<td><code>kBitslice0</code></td>
+<td>Set <code>true</code> when RX uses BITSLICE_0 on UltraScale devices.</td>
+</tr>
+<tr>
+<td><code>kNumEncodeBits</code></td>
+<td>CDCM payload bits per <code>clkPar</code> cycle: <code>1</code> for 1.5 modes; <code>2</code> for 2.5 modes.</td>
+</tr>
+<tr>
+<td><code>kCbtMode</code></td>
+<td>CBT operating mode: <code>"Master"</code> or <code>"Slave"</code>.</td>
+</tr>
+<tr>
+<td><code>enDebug</code></td>
+<td>Enable the preset <code>mark_debug</code> attributes.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="clockreset">Clock/Reset</h3>
+<table>
+<thead>
+<tr>
+<th>Port</th>
+<th>Direction</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>srst</code></td>
+<td>In</td>
+<td>Active-high reset for <code>clkPar</code> logic and the transceiver.</td>
+</tr>
+<tr>
+<td><code>pwrOnRst</code></td>
+<td>In</td>
+<td>Active-high reset for logic driven by <code>clkIndep</code> and <code>clkIdelayRef</code>.</td>
+</tr>
+<tr>
+<td><code>clkSerTx</code></td>
+<td>In</td>
+<td>Serial TX clock from BUFG: 5 x <code>clkPar</code> for CDCM-10; 4 x <code>clkPar</code> for CDCM-8.</td>
+</tr>
+<tr>
+<td><code>clkSerRx</code></td>
+<td>In</td>
+<td>Serial RX clock from BUFG: 5 x <code>clkPar</code> for CDCM-10; 4 x <code>clkPar</code> for CDCM-8.</td>
+</tr>
+<tr>
+<td><code>clkPar</code></td>
+<td>In</td>
+<td>Parallel clock from BUFG.</td>
+</tr>
+<tr>
+<td><code>clkIndep</code></td>
+<td>In</td>
+<td>Independent clock for the clock monitor.</td>
+</tr>
+<tr>
+<td><code>clkIdelayRef</code></td>
+<td>In</td>
+<td>IDELAYCTRL reference clock, independent of <code>clkPar</code>.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="initializationstatus">Initialization/Status</h3>
+<table>
+<thead>
+<tr>
+<th>Port</th>
+<th>Direction</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>initIn</code></td>
+<td>In</td>
+<td>Restart initialization. Synchronous to <code>clkPar</code>.</td>
+</tr>
+<tr>
+<td><code>tapValueIn</code></td>
+<td>In</td>
+<td>IDELAY tap setting used when <code>kFixIdelayTap</code> is <code>true</code>.</td>
+</tr>
+<tr>
+<td><code>reqIdelayShift</code></td>
+<td>In</td>
+<td><code>"00"</code>: no adjustment; <code>"01"</code>: increase delay by one step of <code>tapValueOut</code>; <code>"10"</code>: decrease by one step; <code>"11"</code>: reserved.</td>
+</tr>
+<tr>
+<td><code>reqShutOffOut</code></td>
+<td>Out</td>
+<td>Request the upper-layer protocol to suspend communication for readjustment.</td>
+</tr>
+<tr>
+<td><code>shutOffAckIn</code></td>
+<td>In</td>
+<td>Upper-layer acknowledgement of <code>reqShutOffOut</code>.</td>
+</tr>
+<tr>
+<td><code>delayPerTap</code></td>
+<td>Out</td>
+<td>Delay per tap in picoseconds.</td>
+</tr>
+<tr>
+<td><code>cbtLaneUp</code></td>
+<td>Out</td>
+<td>High when the CBT is ready for communication.</td>
+</tr>
+<tr>
+<td><code>tapValueOut</code></td>
+<td>Out</td>
+<td>Current IDELAY tap setting.</td>
+</tr>
+<tr>
+<td><code>bitslipNum</code></td>
+<td>Out</td>
+<td>Current bitslip position; also updated during CDCM-8 dynamic adjustment.</td>
+</tr>
+<tr>
+<td><code>serdesOffset</code></td>
+<td>Out</td>
+<td>Signed phase offset between the input bit pattern and <code>clkPar</code> for LACCP (CDCM-8 only).</td>
+</tr>
+<tr>
+<td><code>firstBitPatt</code></td>
+<td>Out</td>
+<td>ISERDES pattern captured after IDELAY adjustment, before bitslip.</td>
+</tr>
+<tr>
+<td><code>cntValueOutInit</code></td>
+<td>Out</td>
+<td>Initial master delay counter value (<code>CNTVALUEOUT</code>) for UltraScale CDCM-8; zero on 7-series.</td>
+</tr>
+<tr>
+<td><code>cntValueOutSlaveInit</code></td>
+<td>Out</td>
+<td>Initial slave delay counter value (<code>CNTVALUEOUT</code>) for UltraScale CDCM-8; zero on 7-series.</td>
+</tr>
+<tr>
+<td><code>patternErr</code></td>
+<td>Out</td>
+<td>A received waveform violates the CDCM pattern.</td>
+</tr>
+<tr>
+<td><code>idelayErr</code></td>
+<td>Out</td>
+<td>IDELAY adjustment failed.</td>
+</tr>
+<tr>
+<td><code>bitslipErr</code></td>
+<td>Out</td>
+<td>SERDES bitslip failed to find the expected pattern.</td>
+</tr>
+<tr>
+<td><code>watchDogErr</code></td>
+<td>Out</td>
+<td>Watchdog timeout; the other endpoint appears to be down.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="data-if">Data I/F</h3>
+<table>
+<thead>
+<tr>
+<th>Port</th>
+<th>Direction</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>isKTypeTx</code></td>
+<td>In</td>
+<td>TX character type: <code>1</code> for K-type; <code>0</code> for D-type.</td>
+</tr>
+<tr>
+<td><code>dataInTx</code></td>
+<td>In</td>
+<td>8-bit TX user data.</td>
+</tr>
+<tr>
+<td><code>validInTx</code></td>
+<td>In</td>
+<td>High when <code>dataInTx</code> is valid; low requests an idle pattern.</td>
+</tr>
+<tr>
+<td><code>txBeat</code></td>
+<td>Out</td>
+<td>Indicates the encoder character cycle.</td>
+</tr>
+<tr>
+<td><code>txAck</code></td>
+<td>Out</td>
+<td>Acknowledges acceptance of valid TX data.</td>
+</tr>
+<tr>
+<td><code>isIdleRx</code></td>
+<td>Out</td>
+<td>High when the received character is idle.</td>
+</tr>
+<tr>
+<td><code>isKTypeRx</code></td>
+<td>Out</td>
+<td>RX character type: <code>1</code> for K-type; <code>0</code> for D-type.</td>
+</tr>
+<tr>
+<td><code>dataOutRx</code></td>
+<td>Out</td>
+<td>8-bit RX user data.</td>
+</tr>
+<tr>
+<td><code>validOutRx</code></td>
+<td>Out</td>
+<td>High when <code>dataOutRx</code> is valid.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="physical-if">Physical I/F</h3>
+<table>
+<thead>
+<tr>
+<th>Port</th>
+<th>Direction</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>cdcmTxp</code></td>
+<td>Out</td>
+<td>Positive differential TX output. Connect to the top-level port.</td>
+</tr>
+<tr>
+<td><code>cdcmTxn</code></td>
+<td>Out</td>
+<td>Negative differential TX output. Connect to the top-level port.</td>
+</tr>
+<tr>
+<td><code>cdcmRxp</code></td>
+<td>In</td>
+<td>Positive differential RX input. Connect to the top-level port.</td>
+</tr>
+<tr>
+<td><code>cdcmRxn</code></td>
+<td>In</td>
+<td>Negative differential RX input. Connect to the top-level port.</td>
+</tr>
+<tr>
+<td><code>modClock</code></td>
+<td>Out</td>
+<td>Received modulated clock. For UltraScale CDCM-8 with <code>kBitslice0=true</code>, outputs a virtual clock.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="cbt-characters">CBT characters</h2>
+<p>The CBT character is a 10-bit internal data format in the CBT and is generated by simply adding 2-bit type header to a 8-bit data. There are K-, D-, and T-types characters. In addition, there is a IDLE character, which consists of the modulated signal with the duty ration of 50%. The T-type characters are used to control the CBT, and they are hidden inside the CBT. K-type characters are used to control the link protocol, and their bit pattern are defined in the CBT level. D-type characters are user data. The transmission request for D- and K-type characters are exclusive because it is determined by isKTypeTx signal. However, T-type character transmission can conflict with D- and K-type characters. The transmission priority among characters is defined as <strong>D &lt; T &lt; K</strong> characters. During the T-type character transmission, D-type character transmission is held up. The link protocol needs to keep the current dataInTx until the txAck is returned.</p>
+<h2 id="cdcm-encode-and-decode">CDCM encode and decode</h2>
+<p>Currently, the CBT supports CDCM-10-1.5 (CDCM-8-1.5) and CDCM-10-2.5; they can transmit 1-bit binary + idle pattern and 2-bit binary + idle pattern per clkPar cycle, respectively. For details, see <a href="https://ieeexplore.ieee.org/document/9131833">Ref</a> and <a href="https://ieeexplore.ieee.org/document/10098185">Ref</a>. Since the CBT character has 10-bit data width, 10 and 5 clock cycles are necessary to send a CBT character by CDCM-10-1.5 (CDCM-8-1.5) and CDCM-10-2.5, respectively. CDCM-10-1.5 (CDCM-8-1.5) has longer latency while it provides the better jitter performance because the duty cycle change range is narrower than that of CDCM-10-2.5.</p>
+<h2 id="initialization-process">Initialization process</h2>
+<p><code>CbtLane</code> initializes the receive sampling delay, the SERDES bit position, and the CBT character boundary before completing the Master/Slave handshake. The sequence depends on <code>kCbtMode</code>.</p>
+<h3 id="reset-and-restart-conditions">Reset and restart conditions</h3>
+<p><code>srst</code> resets the transceiver and the <code>clkPar</code> logic. <code>pwrOnRst</code> resets the independent-domain logic and IDELAY initialization logic. Initialization proceeds after reset and internal initialization requests are released; deasserting <code>initIn</code> alone does not immediately start the sequence because its request is stretched internally for more than <code>2 * kMaxWDT</code> cycles of <code>clkPar</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Initialization requests generated by <code>CbtLane</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>"Master"</code></td>
+<td>The stretched <code>initIn</code> request, RX clock loss detected by <code>ClockMonitor</code>, or an internal reset interval triggered by the RX quality monitor or <code>watchDogErr</code>. <code>ClockMonitor</code> uses <code>clkIndep</code>; clock loss holds the receiver in initialization until the RX clock is detected again.</td>
+</tr>
+<tr>
+<td><code>"Slave"</code></td>
+<td>The stretched <code>initIn</code> request or the RX quality monitor request. No <code>ClockMonitor</code> is instantiated in this mode.</td>
+</tr>
+</tbody>
+</table>
+<p>In both modes, <code>CbtRx</code> also requests reinitialization on a watchdog timeout or a handshake timeout. On 7-series devices with <code>genIDELAYCTRL=true</code>, SERDES initialization waits for IDELAYCTRL <code>RDY</code>. For UltraScale CDCM-8 automatic adjustment, it waits for the initial master and slave IDELAY counter values to be captured.</p>
+<h3 id="sampling-delay-and-serdes-alignment">Sampling delay and SERDES alignment</h3>
+<p>With <code>kFixIdelayTap=false</code>, the receiver scans the IDELAY settings, checks for an unchanged sampled idle pattern, and selects the center of a sufficiently wide stable region. With <code>kFixIdelayTap=true</code>, it loads <code>tapValueIn</code> and still checks sample stability before proceeding. The selected setting is reported by <code>tapValueOut</code>.</p>
+<p>After IDELAY adjustment, the receiver captures <code>firstBitPatt</code> and performs bitslip until the sampled pattern matches <code>kIdleCDCM</code> for 16 consecutive checks (<code>kPattOkThreshold</code>). In the RTL's bit-vector order, <code>kIdleCDCM</code> is <code>00000_11111</code> for CDCM-10. CDCM-8 uses <code>0000_1111</code>, padded with a leading <code>0</code> and a trailing <code>1</code> for the same internal 10-bit comparison. Completion of IDELAY adjustment and bitslip sets the internal status to <code>kInitFinish</code>; this does not yet assert <code>cbtLaneUp</code>.</p>
+<h3 id="masterslave-handshake">Master/Slave handshake</h3>
+<p>The receiver state machine controls its local transmitter through the internal back channel. <code>SendZero</code> disables transmission by sending an all-zero pattern, <code>SendIdle</code> sends the idle pattern, and <code>SendInitPattern</code> alternates <code>kInitPCDCM</code> and <code>kInitMCDCM</code>. The initialization T-type characters I1 and I2 are selected by <code>GetInit1Char(kNumEncodeBits)</code> and <code>GetInit2Char(kNumEncodeBits)</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Stage</th>
+<th>Master</th>
+<th>Slave</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Local SERDES initialization</td>
+<td>Sends idle until its local status reaches <code>kInitFinish</code>, then sends the initialization waveform.</td>
+<td>Sends zero until its local status reaches <code>kInitFinish</code>, then sends idle.</td>
+</tr>
+<tr>
+<td>Initialization waveform detection</td>
+<td>Counts 16 received <code>kInitPCDCM</code> or <code>kInitMCDCM</code> patterns after <code>kInitFinish</code>, then sends I1.</td>
+<td>Counts the same 16 patterns, then sends the initialization waveform.</td>
+</tr>
+<tr>
+<td>CBT character alignment</td>
+<td>Sends I1 and enables decoder alignment. Once aligned, sends I2.</td>
+<td>Sends the initialization waveform and enables decoder alignment. Once aligned, sends I1.</td>
+</tr>
+<tr>
+<td>Readiness confirmation</td>
+<td>Counts eight valid received I2 characters, then enters <code>StateCbtRxUp</code>.</td>
+<td>On the first valid received I2, starts sending I2. It then counts eight valid received characters other than I2 before entering <code>StateCbtRxUp</code>.</td>
+</tr>
+</tbody>
+</table>
+<p><code>CdcmRxDecoder</code> aligns the CBT character boundary to I1 separately from the SERDES bitslip. The initialization waveform and readiness counters accumulate matches; they do not require consecutive matches. Initialization T-type characters are handled internally, and user TX data is not acknowledged during these handshake stages.</p>
+<p><code>CbtRx</code> asserts its internal RX-up status in <code>StateCbtRxUp</code>; <code>CbtTx</code> asserts TX-up on an encoder beat in that state. <code>cbtLaneUp</code> is asserted when both are high and their conjunction has propagated through the 128-stage <code>clkPar</code> delay pipeline (<code>kDelayLaneUp</code>).</p>
+<p>If IDELAY adjustment or bitslip fails, <code>idelayErr</code> or <code>bitslipErr</code> is asserted and the corresponding adjustment state machine retries. A handshake timeout causes <code>CbtRx</code> to restart initialization.</p>
+<h2 id="error-detection">Error detection</h2>
+<p>When cbtLaneUp is high, the CBT checks whether the sampled bit pattern is matched with the CDCM encoding rule or not. If a broken pattern is detected, the patternErr signal is asserted, but at this moment, the CBT is not reset. If <strong>more than 1%</strong> of received bit pattern are broken, the RX quality check monitor requests to reset the CBT.</p>
+<p>When cbtLaneUp is high, the CBT transmits the T-type character, dogfood character, periodically. The dogfood character resets the watch dog timer in other side. If the watch dog timer can't eat dogfood within specified time, the watchDogErr goes high, and the watchdog timer requests to reset the CBT.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["toc.integrate", "navigation.tabs"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

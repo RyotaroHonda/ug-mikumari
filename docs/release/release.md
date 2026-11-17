@@ -1,5 +1,13 @@
 # Release notes
 
+## Version 3.2.2 - Nov. 17, 2026
+
+### New
+
+- Added UltraScale MMCM reference sources under `references/UltraScale/` for 100 MHz and 125 MHz input clocks. Both examples provide 500 MHz `clk_fast_TX` and `clk_fast_RX`, and 125 MHz `clk_slow` and `clk_slow_CLR`.
+- Added the `BUFG_CLR_DEV` helper module to drive `BUFDIV_CE` and `BUFDIV_CLR` and provide the `mmcm_cdcm_locked_level2` output.
+- Included matching XDC files and integration instructions in `references/UltraScale/README.md`.
+
 ## Version 3.2.1 - Oct. 9, 2026
 
 ### Fixed
